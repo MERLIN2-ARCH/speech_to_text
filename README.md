@@ -1,6 +1,6 @@
 # ros2_speech_recognition
 
-## Descripction
+## Description
 
 - ROS2 speech recognition package.
 - This package uses the microphone of the robot.
