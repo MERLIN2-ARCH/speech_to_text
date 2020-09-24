@@ -64,13 +64,13 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
 
     # CALIBRATE
     def __calibrate_stt_srv(self, req, res):  # pylint: disable=unused-argument
-        '''Method callback to calibrate'''
+        '''service callback to calibrate'''
 
         self.calibrate_stt(2)
         return res
 
     def calibrate_stt(self, segundos):
-        '''Method to calibrate'''
+        '''method to calibrate'''
 
         rec = sr.Recognizer()
         mic = sr.Microphone()
@@ -83,7 +83,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
 
     # LISTEN
     def listen_from_mic(self):
-        '''Method to listen'''
+        '''method to listen from mic'''
 
         while self.started and rclpy.ok():
             self.get_logger().info("Threshold " + str(self.__rec.energy_threshold))
@@ -122,7 +122,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
                     self.__pub.publish(stt_result)
 
     def __listen_stt_thread_cb(self):
-        '''Method callback of thread'''
+        '''thread callback'''
 
         try:
             self.get_logger().info("listen_thread starts listening")
@@ -132,13 +132,13 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
 
     # START
     def __start_stt_srv(self, req, res):  # pylint: disable=unused-argument
-        '''Method callback to start listen'''
+        '''service callback to start listen'''
 
         self.start_stt()
         return res
 
     def start_stt(self):
-        '''Method to start listen'''
+        '''method to start listen'''
 
         if not self.started:
             self.started = not self.started
@@ -147,7 +147,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             self.get_logger().info("stt is already running")
 
     def _start_stt(self):
-        '''Method protected to start listen'''
+        '''method protected to start listen'''
 
         while(self.__listen_thread != None and self.__listen_thread.is_alive()):
             time.sleep(1)
@@ -161,13 +161,13 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
 
     # STOP
     def __stop_stt_srv(self, req, res):  # pylint: disable=unused-argument
-        '''Method callback to stop listen'''
+        '''service callback to stop listen'''
 
         self.stop_stt()
         return res
 
     def stop_stt(self):
-        '''Method to stop listen'''
+        '''method to stop listen'''
 
         if self.started:
             self.started = not self.started
@@ -176,7 +176,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             self.get_logger().info("stt is already stopped")
 
     def _stop_stt(self):
-        '''Method protected to stop listen'''
+        '''method protected to stop listen'''
 
         if(self.__listen_thread != None and self.__listen_thread.is_alive()):
             self.__listen_thread.terminate()

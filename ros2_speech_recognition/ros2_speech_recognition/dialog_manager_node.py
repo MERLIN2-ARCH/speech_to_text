@@ -59,6 +59,8 @@ class DialogManagerNode(Node):
                                            )
 
     def destroy(self):
+        ''' destroy node method'''
+
         self._action_server.destroy()
         super().destroy_node()
 
@@ -73,7 +75,8 @@ class DialogManagerNode(Node):
             self.is_new_msg = True
 
     def __accepted_callback(self, goal_handle):
-        """Start or defer execution of an already accepted goal."""
+        '''action server accepted callback or defer execution of an already accepted goal'''
+
         with self._goal_queue_lock:
             if self._current_goal is not None:
                 # Put incoming goal in the queue
@@ -85,12 +88,15 @@ class DialogManagerNode(Node):
                 self._current_goal.execute()
 
     def __cancel_server(self, goal_handle):
+        '''action server cancel callback'''
 
         self.is_server_canceled = True
-
+        self.get_logger().info("cancelling action server")
         return CancelResponse.ACCEPT
 
     async def calibrate_stt(self):
+        '''calibrate stt method'''
+
         req = Empty.Request()
         self.__calibrating_client.wait_for_service()
         future = self.__calibrating_client.call_async(req)
@@ -101,6 +107,8 @@ class DialogManagerNode(Node):
             self.get_logger().info('Service call failed %r' % (e,))
 
     async def start_stt(self):
+        '''start stt method'''
+
         req = Empty.Request()
         self.__start_listening_client.wait_for_service()
         future = self.__start_listening_client.call_async(req)
@@ -111,6 +119,8 @@ class DialogManagerNode(Node):
             self.get_logger().info('Service call failed %r' % (e,))
 
     async def stop_stt(self):
+        '''stop stt method'''
+
         req = Empty.Request()
         self.__stop_listening_client.wait_for_service()
         future = self.__stop_listening_client.call_async(req)
@@ -121,7 +131,8 @@ class DialogManagerNode(Node):
             self.get_logger().info('Service call failed %r' % (e,))
 
     def __execute_server(self, goal_handle):
-        '''Method callback of the action server'''
+        '''action server execute callback'''
+
         try:
             self.is_new_msg = False
             self.is_server_canceled = False

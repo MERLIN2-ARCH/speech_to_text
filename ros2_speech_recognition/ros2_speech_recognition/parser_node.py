@@ -40,7 +40,7 @@ class ParserNode(Node):  # pylint: disable=too-few-public-methods
         self.subscription  # prevent unused variable warning
 
     def __parse(self, msg):
-        '''Method cb'''
+        '''parser cb'''
 
         data = msg.data
         new_msg = StringArray()
@@ -48,7 +48,7 @@ class ParserNode(Node):  # pylint: disable=too-few-public-methods
         self.__pub.publish(new_msg)
 
     def parse(self, data):
-        '''Method to do the parse'''
+        '''method to do the parse'''
 
         rule = self.loaded_grammar.find_matching_rules(data)
         tag_list = []

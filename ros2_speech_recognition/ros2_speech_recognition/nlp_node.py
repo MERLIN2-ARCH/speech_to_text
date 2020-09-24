@@ -26,7 +26,7 @@ class NLPNode(Node):  # pylint: disable=too-few-public-methods
         self.subscription  # prevent unused variable warning
 
     def __do_nlp(self, msg):
-        '''Method cb'''
+        '''nlp cb'''
 
         data = msg.data
         new_msg = String()
@@ -34,7 +34,7 @@ class NLPNode(Node):  # pylint: disable=too-few-public-methods
         self.__pub.publish(new_msg)
 
     def do_nlp(self, data):
-        '''Method to do nlp'''
+        '''method to do nlp'''
 
         nlp_s = ""
         if data:
