@@ -48,29 +48,29 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             started_param_name).get_parameter_value().bool_value
 
         if self.started:
-            self.calibrate(2)
-            self._start()
+            self.calibrate_stt(2)
+            self._start_stt()
 
         # result stt publisher
         self.__pub = self.create_publisher(String, 'stt', 10)
 
         # service servers
         self.__start_server = self.create_service(
-            Empty, 'start_listening', self.__start_srv)
+            Empty, 'start_listening', self.__start_stt_srv)
         self.__stop_server = self.create_service(
-            Empty, 'stop_listening', self.__stop_srv)
+            Empty, 'stop_listening', self.__stop_stt_srv)
         self.__calibrate_server = self.create_service(
-            Empty, 'calibrate_listening', self.__calibrate_srv)
+            Empty, 'calibrate_listening', self.__calibrate_stt_srv)
 
     # CALIBRATE
-    def __calibrate_srv(self, req, res):  # pylint: disable=unused-argument
-        '''Mthod callback to calibrate'''
+    def __calibrate_stt_srv(self, req, res):  # pylint: disable=unused-argument
+        '''Method callback to calibrate'''
 
-        self.calibrate(2)
+        self.calibrate_stt(2)
         return res
 
-    def calibrate(self, segundos):
-        '''Mthod to calibrate'''
+    def calibrate_stt(self, segundos):
+        '''Method to calibrate'''
 
         rec = sr.Recognizer()
         mic = sr.Microphone()
@@ -82,7 +82,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
         self.get_logger().info("Set minimum energy threshold to " + str(self._energy_threshold))
 
     # LISTEN
-    def listen(self):
+    def listen_from_mic(self):
         '''Method to listen'''
 
         while self.started:
@@ -121,32 +121,32 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
                 finally:
                     self.__pub.publish(stt_result)
 
-    def __listen_thread_function(self):
+    def __listen_stt_thread_cb(self):
         '''Method callback of thread'''
 
         try:
             self.get_logger().info("listen_thread starts listening")
-            self.listen()
+            self.listen_from_mic()
         finally:
             self.get_logger().info("listen_thread ends")
 
     # START
-    def __start_srv(self, req, res):  # pylint: disable=unused-argument
+    def __start_stt_srv(self, req, res):  # pylint: disable=unused-argument
         '''Method callback to start listen'''
 
-        self.start()
+        self.start_stt()
         return res
 
-    def start(self):
+    def start_stt(self):
         '''Method to start listen'''
 
         if not self.started:
             self.started = not self.started
-            self._start()
+            self._start_stt()
         else:
             self.get_logger().info("stt is already running")
 
-    def _start(self):
+    def _start_stt(self):
         '''Method protected to start listen'''
 
         while(self.__listen_thread != None and self.__listen_thread.is_alive()):
@@ -154,33 +154,33 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
 
         self.__rec.energy_threshold = self._energy_threshold
         self.__listen_thread = CustomThread(
-            target=self.__listen_thread_function)
+            target=self.__listen_stt_thread_cb)
         self.__listen_thread.start()
-        self.get_logger().info("start_listening, Threshold " +
+        self.get_logger().info("start listening, Threshold " +
                                str(self.__rec.energy_threshold))
 
     # STOP
-    def __stop_srv(self, req, res):  # pylint: disable=unused-argument
+    def __stop_stt_srv(self, req, res):  # pylint: disable=unused-argument
         '''Method callback to stop listen'''
 
-        self.stop()
+        self.stop_stt()
         return res
 
-    def stop(self):
+    def stop_stt(self):
         '''Method to stop listen'''
 
         if self.started:
             self.started = not self.started
-            self._stop()
+            self._stop_stt()
         else:
             self.get_logger().info("stt is already stopped")
 
-    def _stop(self):
+    def _stop_stt(self):
         '''Method protected to stop listen'''
 
         if(self.__listen_thread != None and self.__listen_thread.is_alive()):
             self.__listen_thread.terminate()
-        self.get_logger().info("stop_listening, Threshold " +
+        self.get_logger().info("stop listening, Threshold " +
                                str(self.__rec.energy_threshold))
 
 

@@ -52,7 +52,7 @@ class DialogManagerNode(Node):
         # action server
         self._action_server = ActionServer(self,
                                            ListenOnce,
-                                           '/listen_once',
+                                           'listen_once',
                                            execute_callback=self.__execute_server,
                                            cancel_callback=self.__cancel_server)
 
@@ -88,7 +88,7 @@ class DialogManagerNode(Node):
 
         return CancelResponse.ACCEPT
 
-    async def calibrate(self):
+    async def calibrate_stt(self):
         req = Empty.Request()
         self.__calibrating_client.wait_for_service()
         future = self.__calibrating_client.call_async(req)
@@ -126,7 +126,7 @@ class DialogManagerNode(Node):
             self.new_msg = StringArray()
 
             if(goal_handle.request.calibrate):
-                asyncio.run(self.calibrate())
+                asyncio.run(self.calibrate_stt())
 
             # starting stt
             asyncio.run(self.start_stt())
