@@ -54,7 +54,9 @@ class DialogManagerNode(Node):
                                            ListenOnce,
                                            'listen_once',
                                            execute_callback=self.__execute_server,
-                                           cancel_callback=self.__cancel_server)
+                                           cancel_callback=self.__cancel_server,
+                                           handle_accepted_callback=self.__accepted_callback,
+                                           )
 
     def destroy(self):
         self._action_server.destroy()
@@ -70,7 +72,7 @@ class DialogManagerNode(Node):
             self.new_msg = msg
             self.is_new_msg = True
 
-    def handle_accepted_callback(self, goal_handle):
+    def __accepted_callback(self, goal_handle):
         """Start or defer execution of an already accepted goal."""
         with self._goal_queue_lock:
             if self._current_goal is not None:
