@@ -2,6 +2,7 @@
 
 ## Description
 
+- ROS 2 Foxy Fitzroy
 - ROS2 speech recognition package.
 - This package uses the microphone of the robot.
 - Python libs:
