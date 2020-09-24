@@ -7,7 +7,7 @@
 - Python libs:
   - speech_recognition
   - nltk
-  - ontractions
+  - contractions
   - pyjsgf
 
 
