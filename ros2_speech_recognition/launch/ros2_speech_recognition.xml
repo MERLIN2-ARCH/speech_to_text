@@ -1,0 +1,24 @@
+<launch>
+
+	<arg name="stt_grammar" default="$(find-pkg-share ros2_speech_recognition)/grammars/example.gram" />
+	<arg name="stt_service" default="sphinx" />
+	<arg name="stt_started" default="False" />
+
+	<arg name="parser_grammar" default="$(find-pkg-share ros2_speech_recognition)/grammars/example.gram" />
+
+
+	<group ns="speech_recognition">
+
+		<node name="stt" pkg="ros2_speech_recognition" exec="stt_node" output="screen">
+			<param name="service" value="$(var stt_service)" />
+			<param name="grammar" value="$(var stt_grammar)" />
+			<param name="started" value="$(var stt_started)" />
+		</node>
+		<node name="nlp_node" pkg="ros2_speech_recognition" exec="nlp_node" output="screen"/>
+		<node name="parser_node" pkg="ros2_speech_recognition" exec="parser_node" output="screen">
+			<param name="grammar" value="$(var parser_grammar)" />	
+		</node>
+		<node name="dialog_manager_node" pkg="ros2_speech_recognition" exec="dialog_manager_node" output="screen"/>
+
+	</group>
+</launch>
