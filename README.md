@@ -3,8 +3,8 @@
 ## Description
 
 - ROS2 Foxy Fitzroy
-- ROS2 speech recognition system.
-- This system uses the microphone of the robot.
+- ROS2 speech recognition system
+- This system uses the microphone of the robot
 - Python libs:
   - speech_recognition
   - nltk
