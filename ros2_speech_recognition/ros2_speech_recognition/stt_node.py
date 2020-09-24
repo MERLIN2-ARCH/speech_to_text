@@ -85,7 +85,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
     def listen_from_mic(self):
         '''Method to listen'''
 
-        while self.started:
+        while self.started and rclpy.ok():
             self.get_logger().info("Threshold " + str(self.__rec.energy_threshold))
             self.get_logger().info("Say something!")
             with self.__mic as source:
