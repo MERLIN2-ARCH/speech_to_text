@@ -1,0 +1,6 @@
+# Define the goal
+bool calibrate true
+---
+# Define the result
+string[] stt_strings
+---
