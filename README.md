@@ -31,5 +31,5 @@ ros2 launch ros2_speech_recognition ros2_speech_recognition_launch.py
 
 - XML launch
 ```
-ros2 launch ros2_speech_recognition ros2_speech_recognition.xml
+ros2 launch ros2_speech_recognition ros2_speech_recognition_launch.xml
 ```

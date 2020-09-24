@@ -14,7 +14,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'grammars'), glob('grammars/*.gram')),
         (os.path.join('share', package_name), glob('launch/*_launch.py')),
-        (os.path.join('share', package_name), glob('launch/*.xml'))
+        (os.path.join('share', package_name), glob('launch/*_launch.xml'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
