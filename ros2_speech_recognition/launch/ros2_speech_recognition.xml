@@ -7,7 +7,8 @@
 	<arg name="parser_grammar" default="$(find-pkg-share ros2_speech_recognition)/grammars/example.gram" />
 
 
-	<group ns="speech_recognition">
+	<group>
+		<push-ros-namespace namespace="speech_recognition"/>
 
 		<node name="stt" pkg="ros2_speech_recognition" exec="stt_node" output="screen">
 			<param name="service" value="$(var stt_service)" />
