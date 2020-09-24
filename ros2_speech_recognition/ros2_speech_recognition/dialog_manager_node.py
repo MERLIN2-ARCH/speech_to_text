@@ -101,6 +101,7 @@ class DialogManagerNode(Node):
         self.__calibrating_client.wait_for_service()
         future = self.__calibrating_client.call_async(req)
         self.get_logger().info("calibrating stt")
+
         try:
             await future
         except Exception as e:
@@ -113,6 +114,7 @@ class DialogManagerNode(Node):
         self.__start_listening_client.wait_for_service()
         future = self.__start_listening_client.call_async(req)
         self.get_logger().info("starting stt")
+
         try:
             await future
         except Exception as e:
@@ -125,6 +127,7 @@ class DialogManagerNode(Node):
         self.__stop_listening_client.wait_for_service()
         future = self.__stop_listening_client.call_async(req)
         self.get_logger().info("stopping stt")
+
         try:
             await future
         except Exception as e:
@@ -171,6 +174,7 @@ class DialogManagerNode(Node):
                     self._current_goal = self._goal_queue.popleft()
                     self.get_logger().info('Next goal pulled from the queue')
                     self._current_goal.execute()
+
                 except IndexError:
                     # No goal in the queue.
                     self._current_goal = None
