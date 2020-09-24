@@ -10,7 +10,7 @@
 	<group>
 		<push-ros-namespace namespace="speech_recognition"/>
 
-		<node name="stt" pkg="ros2_speech_recognition" exec="stt_node" output="screen">
+		<node name="stt_node" pkg="ros2_speech_recognition" exec="stt_node" output="screen">
 			<param name="service" value="$(var stt_service)" />
 			<param name="grammar" value="$(var stt_grammar)" />
 			<param name="started" value="$(var stt_started)" />
