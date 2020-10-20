@@ -189,8 +189,6 @@ def main(args=None):
 
     rclpy.spin(node, executor=executor)
 
-    rclpy.spin(node)
-
     node.destroy()
 
     rclpy.shutdown()
