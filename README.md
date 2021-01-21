@@ -26,11 +26,16 @@ colcon build && source install/setup.bash
 ## Launh
 
 - Python launch
-```
+```shell
 ros2 launch ros2_speech_recognition ros2_speech_recognition_launch.py
 ```
 
 - XML launch
-```
+```shell
 ros2 launch ros2_speech_recognition ros2_speech_recognition_launch.xml
+```
+
+## Shell Example
+```shell
+ros2 action send_goal /speech_recognition/listen_once ros2_speech_recognition_interfaces/action/ListenOnce {}
 ```
