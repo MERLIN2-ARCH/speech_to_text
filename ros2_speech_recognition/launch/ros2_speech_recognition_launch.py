@@ -2,6 +2,7 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument, SetEnvironmentVariable
+from launch_ros.actions import PushRosNamespace
 import ament_index_python
 
 
@@ -11,6 +12,8 @@ def generate_launch_description():
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
+
+    namespace_cmd = PushRosNamespace(namespace=namespace)
 
     #
     # ARGS
@@ -50,7 +53,6 @@ def generate_launch_description():
         package=pkg_name,
         executable='stt_node',
         name='stt_node',
-        namespace=namespace,
         parameters=[{'grammar': stt_grammar},
                     {'service': stt_service},
                     {'started': stt_started}]
@@ -60,14 +62,12 @@ def generate_launch_description():
         package=pkg_name,
         executable='nlp_node',
         name='nlp_node',
-        namespace=namespace,
     )
 
     parser_node_cmd = Node(
         package=pkg_name,
         executable='parser_node',
         name='parser_node',
-        namespace=namespace,
         parameters=[{'grammar': parser_grammar}]
     )
 
@@ -75,12 +75,12 @@ def generate_launch_description():
         package=pkg_name,
         executable='dialog_manager_node',
         name='dialog_manager_node',
-        namespace=namespace,
     )
 
     ld = LaunchDescription()
 
     ld.add_action(stdout_linebuf_envvar)
+    ld.add_action(namespace_cmd)
 
     ld.add_action(declare_stt_grammar_cmd)
     ld.add_action(declare_stt_service_cmd)
