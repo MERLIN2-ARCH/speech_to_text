@@ -9,7 +9,7 @@ from ros2_speech_recognition_interfaces.msg import StringArray
 
 from jsgf import parse_grammar_file
 
-from custom_ros2 import Node
+from rclpy.node import Node
 
 
 class ParserNode(Node):  # pylint: disable=too-few-public-methods
@@ -76,7 +76,7 @@ def main(args=None):
 
     node = ParserNode()
 
-    node.join_spin()
+    rclpy.spin(node)
 
     node.destroy_node()
 
