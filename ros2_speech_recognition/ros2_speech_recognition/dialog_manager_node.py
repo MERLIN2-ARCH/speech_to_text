@@ -1,27 +1,27 @@
-'''ROS node dialog manger'''
+""" ROS2 Node for Dialog Manger """
 
 import time
 import threading
 import collections
-import asyncio
 
 import rclpy
-from rclpy.action import ActionServer, CancelResponse, GoalResponse
-from rclpy.callback_groups import ReentrantCallbackGroup
-from rclpy.executors import MultiThreadedExecutor
-from rclpy.node import Node
 
 from ros2_speech_recognition_interfaces.msg import StringArray
 from ros2_speech_recognition_interfaces.action import ListenOnce
 from action_msgs.msg import GoalStatus
 from std_srvs.srv import Empty
 
+from custom_ros2 import (
+    Node,
+    ActionSingleServer
+)
+
 
 class DialogManagerNode(Node):
-    '''DialogManagerNode class'''
+    """ Dialog Manager Node Class """
 
     def __init__(self):
-        super().__init__('dialog_manager_node')
+        super().__init__("dialog_manager_node")
 
         self._goal_queue = collections.deque()
         self._goal_queue_lock = threading.Lock()
@@ -33,151 +33,116 @@ class DialogManagerNode(Node):
 
         # service clients
         self.__start_listening_client = self.create_client(
-            Empty, 'start_listening')
+            Empty, "start_listening")
         self.__stop_listening_client = self.create_client(
-            Empty, 'stop_listening')
+            Empty, "stop_listening")
         self.__calibrating_client = self.create_client(
-            Empty, 'calibrate_listening')
+            Empty, "calibrate_listening")
 
         # pubs and subs
-        self.__pub = self.create_publisher(StringArray, 'stt_dialog', 10)
+        self.__pub = self.create_publisher(StringArray, "stt_dialog", 10)
 
         self.subscription = self.create_subscription(
             StringArray,
-            'stt_parse',
-            self.stt_callback,
+            "stt_parse",
+            self.__stt_callback,
             10)
-        self.subscription  # prevent unused variable warning
 
         # action server
-        self._action_server = ActionServer(self,
-                                           ListenOnce,
-                                           'listen_once',
-                                           execute_callback=self.__execute_server,
-                                           cancel_callback=self.__cancel_server,
-                                           handle_accepted_callback=self.__accepted_callback,
-                                           )
+        self.__action_server = ActionSingleServer(self,
+                                                  ListenOnce,
+                                                  "listen_once",
+                                                  execute_callback=self.__execute_server,
+                                                  cancel_callback=self.__cancel_server,
+                                                  )
 
     def destroy(self):
-        ''' destroy node method'''
+        """ destroy node and action server """
 
-        self._action_server.destroy()
+        self.__action_server.destroy()
         super().destroy_node()
 
-    def stt_callback(self, msg):
-        '''Method to redirect stt data'''
+    def __stt_callback(self, msg: StringArray):
+        """ final speech calback
+
+        Args:
+            msg (StringArray): list of tags
+        """
 
         self.get_logger().info("Dialog Manager: " + str(msg.strings))
         self.__pub.publish(msg)
 
-        if(not self.is_new_msg):
+        if not self.is_new_msg:
             self.new_msg = msg
             self.is_new_msg = True
 
-    def __accepted_callback(self, goal_handle):
-        '''action server accepted callback or defer execution of an already accepted goal'''
-
-        with self._goal_queue_lock:
-            if self._current_goal is not None:
-                # Put incoming goal in the queue
-                self._goal_queue.append(goal_handle)
-                self.get_logger().info('Goal put in the queue')
-            else:
-                # Start goal execution right away
-                self._current_goal = goal_handle
-                self._current_goal.execute()
-
-    def __cancel_server(self, goal_handle):
-        '''action server cancel callback'''
+    def __cancel_server(self):
+        """ action server cancel callback """
 
         self.is_server_canceled = True
-        self.get_logger().info("cancelling action server")
-        return CancelResponse.ACCEPT
 
-    async def calibrate_stt(self):
-        '''calibrate stt method'''
+    def calibrate_stt(self):
+        """ calibrate stt method """
 
         req = Empty.Request()
         self.__calibrating_client.wait_for_service()
-        future = self.__calibrating_client.call_async(req)
+        self.__calibrating_client.call(req)
         self.get_logger().info("calibrating stt")
 
-        try:
-            await future
-        except Exception as e:
-            self.get_logger().info('Service call failed %r' % (e,))
-
-    async def start_stt(self):
-        '''start stt method'''
+    def start_stt(self):
+        """ start stt method """
 
         req = Empty.Request()
         self.__start_listening_client.wait_for_service()
-        future = self.__start_listening_client.call_async(req)
+        self.__start_listening_client.call(req)
         self.get_logger().info("starting stt")
 
-        try:
-            await future
-        except Exception as e:
-            self.get_logger().info('Service call failed %r' % (e,))
-
-    async def stop_stt(self):
-        '''stop stt method'''
+    def stop_stt(self):
+        """ stop stt method """
 
         req = Empty.Request()
         self.__stop_listening_client.wait_for_service()
-        future = self.__stop_listening_client.call_async(req)
+        self.__stop_listening_client.call(req)
         self.get_logger().info("stopping stt")
 
-        try:
-            await future
-        except Exception as e:
-            self.get_logger().info('Service call failed %r' % (e,))
+    def __execute_server(self, goal_handle) -> ListenOnce.Result:
+        """ action server execute callback
 
-    def __execute_server(self, goal_handle):
-        '''action server execute callback'''
+        Args:
+            goal_handle ([type]): goal_handle
 
-        try:
-            self.is_new_msg = False
-            self.is_server_canceled = False
-            self.new_msg = StringArray()
+        Returns:
+            ListenOnce.Result: action server result (list of tags)
+        """
 
-            if(goal_handle.request.calibrate):
-                asyncio.run(self.calibrate_stt())
+        self.is_new_msg = False
+        self.is_server_canceled = False
+        self.new_msg = StringArray()
 
-            # starting stt
-            asyncio.run(self.start_stt())
+        if(goal_handle.request.calibrate):
+            self.calibrate_stt()
 
-            # wait for message
-            while(not self.is_new_msg and not self.is_server_canceled):
-                self.get_logger().info("Waiting for msg")
-                time.sleep(1)
+        # starting stt
+        self.start_stt()
 
-            # stoping stt
-            asyncio.run(self.stop_stt())
+        # wait for message
+        while(not self.is_new_msg and not self.is_server_canceled):
+            self.get_logger().info("Waiting for msg")
+            time.sleep(1)
 
-            # results
-            result = ListenOnce.Result()
+        # stoping stt
+        self.stop_stt()
 
-            if(goal_handle.status != GoalStatus.STATUS_CANCELED and
-               goal_handle.status != GoalStatus.STATUS_CANCELING):
-                result.stt_strings = self.new_msg.strings
-                goal_handle.succeed()
-            else:
-                goal_handle.canceled()
+        # results
+        result = ListenOnce.Result()
+        if(goal_handle.status != GoalStatus.STATUS_CANCELED and
+                goal_handle.status != GoalStatus.STATUS_CANCELING):
+            result.stt_strings = self.new_msg.strings
+            goal_handle.succeed()
+        else:
+            goal_handle.canceled()
 
-            return result
-
-        finally:
-            with self._goal_queue_lock:
-                try:
-                    # Start execution of the next goal in the queue.
-                    self._current_goal = self._goal_queue.popleft()
-                    self.get_logger().info('Next goal pulled from the queue')
-                    self._current_goal.execute()
-
-                except IndexError:
-                    # No goal in the queue.
-                    self._current_goal = None
+        return result
 
 
 def main(args=None):
@@ -185,14 +150,12 @@ def main(args=None):
 
     node = DialogManagerNode()
 
-    executor = MultiThreadedExecutor()
-
-    rclpy.spin(node, executor=executor)
+    node.join_spin()
 
     node.destroy()
 
     rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

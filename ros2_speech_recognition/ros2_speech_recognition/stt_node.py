@@ -1,26 +1,25 @@
-'''ROS node to make stt'''
+""" ROS2 Node to make STT """
 
-import os
 import time
 
 import speech_recognition as sr
 
 import rclpy
 import ament_index_python
-from rclpy.node import Node
 
 from std_msgs.msg import String
 from std_srvs.srv import Empty
-
 from ros2_speech_recognition.custom_thread import CustomThread
+
+from custom_ros2 import Node
 
 
 class STTNode(Node):  # pylint: disable=too-many-instance-attributes
-    '''STTNode class'''
+    """ STT Node Class """
 
     def __init__(self):
 
-        super().__init__('stt_node')
+        super().__init__("stt_node")
 
         self.__listen_thread = None
 
@@ -36,7 +35,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
 
         self.declare_parameter(service_param_name, "sphinx")
         self.declare_parameter(grammar_param_name, ament_index_python.get_package_share_directory(
-            "ros2_speech_recognition") + '/grammars/example.gram')
+            "ros2_speech_recognition") + "/grammars/example.gram")
 
         self.declare_parameter(started_param_name, True)
 
@@ -52,38 +51,52 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             self._start_stt()
 
         # result stt publisher
-        self.__pub = self.create_publisher(String, 'stt', 10)
+        self.__pub = self.create_publisher(String, "stt", 10)
 
         # service servers
         self.__start_server = self.create_service(
-            Empty, 'start_listening', self.__start_stt_srv)
+            Empty, "start_listening", self.__start_stt_srv)
         self.__stop_server = self.create_service(
-            Empty, 'stop_listening', self.__stop_stt_srv)
+            Empty, "stop_listening", self.__stop_stt_srv)
         self.__calibrate_server = self.create_service(
-            Empty, 'calibrate_listening', self.__calibrate_stt_srv)
+            Empty, "calibrate_listening", self.__calibrate_stt_srv)
 
     # CALIBRATE
-    def __calibrate_stt_srv(self, req, res):  # pylint: disable=unused-argument
-        '''service callback to calibrate'''
+    def __calibrate_stt_srv(self,
+                            req: Empty.Request,
+                            res: Empty.Response) -> Empty.Response:  # pylint: disable=unused-argument
+        """ calibrate service
+
+        Args:
+            req (Empty.Request): empty
+            res (Empty.Response): empty
+
+        Returns:
+            Empty.Response: empty
+        """
 
         self.calibrate_stt(2)
         return res
 
-    def calibrate_stt(self, segundos):
-        '''method to calibrate'''
+    def calibrate_stt(self, seconds: int):
+        """ calibrate noise
+
+        Args:
+            seconds (int): seconds to check noise
+        """
 
         rec = sr.Recognizer()
         mic = sr.Microphone()
         self.get_logger().info("A moment of silence, please...")
         with mic as source:
-            rec.adjust_for_ambient_noise(source, duration=segundos)
+            rec.adjust_for_ambient_noise(source, duration=seconds)
         self._energy_threshold = rec.energy_threshold  # Saving energy threshold
         self.__rec.energy_threshold = self._energy_threshold
         self.get_logger().info("Set minimum energy threshold to " + str(self._energy_threshold))
 
     # LISTEN
     def listen_from_mic(self):
-        '''method to listen from mic'''
+        """ listen from mic """
 
         while self.started and rclpy.ok():
             self.get_logger().info("Threshold " + str(self.__rec.energy_threshold))
@@ -98,10 +111,10 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
                 stt_result = String()
 
                 try:
-                    if self.service == 'sphinx':
+                    if self.service == "sphinx":
                         value = self.__rec.recognize_sphinx(
                             audio, grammar=self.grammar)
-                    elif self.service == 'google':
+                    elif self.service == "google":
                         value = self.__rec.recognize_google(audio)
 
                     if str is bytes:  # bytes for strings (Python 2)
@@ -122,7 +135,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
                     self.__pub.publish(stt_result)
 
     def __listen_stt_thread_cb(self):
-        '''thread callback'''
+        """ thread callback to listen """
 
         try:
             self.get_logger().info("listen_thread starts listening")
@@ -131,14 +144,24 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             self.get_logger().info("listen_thread ends")
 
     # START
-    def __start_stt_srv(self, req, res):  # pylint: disable=unused-argument
-        '''service callback to start listen'''
+    def __start_stt_srv(self,
+                        req: Empty.Request,
+                        res: Empty.Response) -> Empty.Response:  # pylint: disable=unused-argument
+        """ service to start listen
+
+        Args:
+            req(Empty.Request): empty
+            res(Empty.Response): empty
+
+        Returns:
+            Empty.Response: empty
+        """
 
         self.start_stt()
         return res
 
     def start_stt(self):
-        '''method to start listen'''
+        """ start listen """
 
         if not self.started:
             self.started = not self.started
@@ -147,9 +170,9 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             self.get_logger().info("stt is already running")
 
     def _start_stt(self):
-        '''method protected to start listen'''
+        """ start listen with a thread"""
 
-        while(self.__listen_thread != None and self.__listen_thread.is_alive()):
+        while(self.__listen_thread is not None and self.__listen_thread.is_alive()):
             time.sleep(1)
 
         self.__rec.energy_threshold = self._energy_threshold
@@ -160,14 +183,24 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
                                str(self.__rec.energy_threshold))
 
     # STOP
-    def __stop_stt_srv(self, req, res):  # pylint: disable=unused-argument
-        '''service callback to stop listen'''
+    def __stop_stt_srv(self,
+                       req: Empty.Request,
+                       res: Empty.Response) -> Empty.Response:  # pylint: disable=unused-argument
+        """ service to stop listen
+
+        Args:
+            req(Empty.Request): empty
+            res(Empty.Response): empty
+
+        Returns:
+            Empty.Response: empty
+        """
 
         self.stop_stt()
         return res
 
     def stop_stt(self):
-        '''method to stop listen'''
+        """ stop listen """
 
         if self.started:
             self.started = not self.started
@@ -176,9 +209,9 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             self.get_logger().info("stt is already stopped")
 
     def _stop_stt(self):
-        '''method protected to stop listen'''
+        """ stop listen with a thread """
 
-        if(self.__listen_thread != None and self.__listen_thread.is_alive()):
+        if(self.__listen_thread is not None and self.__listen_thread.is_alive()):
             self.__listen_thread.terminate()
         self.get_logger().info("stop listening, Threshold " +
                                str(self.__rec.energy_threshold))
@@ -189,12 +222,12 @@ def main(args=None):
 
     node = STTNode()
 
-    rclpy.spin(node)
+    node.join_spin()
 
     node.destroy_node()
 
     rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
