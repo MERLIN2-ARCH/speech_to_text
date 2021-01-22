@@ -29,7 +29,7 @@ class DialogManagerNode(Node):
 
         self.is_new_msg = False
         self.new_msg = None
-        self.is_server_canceled = False
+        self.__server_cancelled = False
 
         # service clients
         self.__start_listening_client = self.create_client(
@@ -79,7 +79,7 @@ class DialogManagerNode(Node):
     def __cancel_server(self):
         """ action server cancel callback """
 
-        self.is_server_canceled = True
+        self.__server_cancelled = True
 
     def calibrate_stt(self):
         """ calibrate stt method """
@@ -116,7 +116,7 @@ class DialogManagerNode(Node):
         """
 
         self.is_new_msg = False
-        self.is_server_canceled = False
+        self.__server_cancelled = False
         self.new_msg = StringArray()
 
         if(goal_handle.request.calibrate):
@@ -126,7 +126,7 @@ class DialogManagerNode(Node):
         self.start_stt()
 
         # wait for message
-        while(not self.is_new_msg and not self.is_server_canceled):
+        while(not self.is_new_msg and not self.__server_cancelled):
             self.get_logger().info("Waiting for msg")
             time.sleep(1)
 
@@ -135,11 +135,12 @@ class DialogManagerNode(Node):
 
         # results
         result = ListenOnce.Result()
-        if(goal_handle.status != GoalStatus.STATUS_CANCELED and
-                goal_handle.status != GoalStatus.STATUS_CANCELING):
+        if(not self.__server_cancelled):
             result.stt_strings = self.new_msg.strings
             goal_handle.succeed()
         else:
+            while goal_handle.is_cancel_requested:
+                time.sleep(1)
             goal_handle.canceled()
 
         return result
