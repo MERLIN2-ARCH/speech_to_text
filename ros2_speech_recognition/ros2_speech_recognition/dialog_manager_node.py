@@ -1,14 +1,10 @@
 """ ROS2 Node for Dialog Manger """
 
 import time
-import threading
-import collections
-
 import rclpy
 
 from ros2_speech_recognition_interfaces.msg import StringArray
 from ros2_speech_recognition_interfaces.action import ListenOnce
-from action_msgs.msg import GoalStatus
 from std_srvs.srv import Empty
 
 from custom_ros2 import (
@@ -23,13 +19,8 @@ class DialogManagerNode(Node):
     def __init__(self):
         super().__init__("dialog_manager_node")
 
-        self._goal_queue = collections.deque()
-        self._goal_queue_lock = threading.Lock()
-        self._current_goal = None
-
         self.is_new_msg = False
         self.new_msg = None
-        self.__server_cancelled = False
 
         # service clients
         self.__start_listening_client = self.create_client(
@@ -52,8 +43,7 @@ class DialogManagerNode(Node):
         self.__action_server = ActionSingleServer(self,
                                                   ListenOnce,
                                                   "listen_once",
-                                                  execute_callback=self.__execute_server,
-                                                  cancel_callback=self.__cancel_server,
+                                                  execute_callback=self.__execute_server
                                                   )
 
     def destroy(self):
@@ -75,11 +65,6 @@ class DialogManagerNode(Node):
         if not self.is_new_msg:
             self.new_msg = msg
             self.is_new_msg = True
-
-    def __cancel_server(self):
-        """ action server cancel callback """
-
-        self.__server_cancelled = True
 
     def calibrate_stt(self):
         """ calibrate stt method """
@@ -116,32 +101,32 @@ class DialogManagerNode(Node):
         """
 
         self.is_new_msg = False
-        self.__server_cancelled = False
         self.new_msg = StringArray()
 
-        if(goal_handle.request.calibrate):
+        if goal_handle.request.calibrate:
             self.calibrate_stt()
 
         # starting stt
         self.start_stt()
 
         # wait for message
-        while(not self.is_new_msg and not self.__server_cancelled):
+        while(not self.is_new_msg and not self.__action_server.is_canceled()):
             self.get_logger().info("Waiting for msg")
-            time.sleep(1)
+            time.sleep(0.5)
 
         # stoping stt
         self.stop_stt()
 
         # results
         result = ListenOnce.Result()
-        if(not self.__server_cancelled):
+
+        if self.__action_server.is_canceled():
+            self.__action_server.wait_for_canceling()
+            goal_handle.canceled()
+
+        else:
             result.stt_strings = self.new_msg.strings
             goal_handle.succeed()
-        else:
-            while goal_handle.is_cancel_requested:
-                time.sleep(1)
-            goal_handle.canceled()
 
         return result
 
