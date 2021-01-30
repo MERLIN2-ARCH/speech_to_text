@@ -46,7 +46,7 @@ class DialogManagerNode(Node):
                                                   execute_callback=self.__execute_server
                                                   )
 
-    def destroy(self):
+    def destroy_node(self):
         """ destroy node and action server """
 
         self.__action_server.destroy()
@@ -137,8 +137,6 @@ def main(args=None):
     node = DialogManagerNode()
 
     node.join_spin()
-
-    node.destroy()
 
     rclpy.shutdown()
 
