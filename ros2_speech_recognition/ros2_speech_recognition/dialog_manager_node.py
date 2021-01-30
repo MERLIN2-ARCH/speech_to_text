@@ -46,12 +46,6 @@ class DialogManagerNode(Node):
                                                   execute_callback=self.__execute_server
                                                   )
 
-    def destroy_node(self):
-        """ destroy node and action server """
-
-        self.__action_server.destroy()
-        super().destroy_node()
-
     def __stt_callback(self, msg: StringArray):
         """ final speech calback
 
