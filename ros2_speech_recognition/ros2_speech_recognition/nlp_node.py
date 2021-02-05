@@ -7,7 +7,7 @@ from std_msgs.msg import String
 import nltk
 import contractions
 
-from rclpy.node import Node
+from custom_ros2 import Node
 
 
 class NLPNode(Node):  # pylint: disable=too-few-public-methods
@@ -74,9 +74,7 @@ def main(args=None):
 
     node = NLPNode()
 
-    rclpy.spin(node)
-
-    node.destroy_node()
+    node.join_spin()
 
     rclpy.shutdown()
 

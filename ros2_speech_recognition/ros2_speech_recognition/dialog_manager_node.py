@@ -7,10 +7,7 @@ from ros2_speech_recognition_interfaces.msg import StringArray
 from ros2_speech_recognition_interfaces.action import ListenOnce
 from std_srvs.srv import Empty
 
-from custom_ros2 import (
-    Node,
-    ActionSingleServer
-)
+from custom_ros2 import Node
 
 
 class DialogManagerNode(Node):
@@ -40,11 +37,10 @@ class DialogManagerNode(Node):
             10)
 
         # action server
-        self.__action_server = ActionSingleServer(self,
-                                                  ListenOnce,
-                                                  "listen_once",
-                                                  execute_callback=self.__execute_server
-                                                  )
+        self.__action_server = self.create_action_server(ListenOnce,
+                                                         "listen_once",
+                                                         execute_callback=self.__execute_server
+                                                         )
 
     def __stt_callback(self, msg: StringArray):
         """ final speech calback
