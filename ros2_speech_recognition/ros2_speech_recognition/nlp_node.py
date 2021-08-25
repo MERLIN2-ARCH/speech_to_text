@@ -7,7 +7,7 @@ from std_msgs.msg import String
 import nltk
 import contractions
 
-from custom_ros2 import Node
+from simple_node import Node
 
 
 class NLPNode(Node):  # pylint: disable=too-few-public-methods

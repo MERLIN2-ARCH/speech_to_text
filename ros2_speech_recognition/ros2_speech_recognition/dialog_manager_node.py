@@ -7,7 +7,7 @@ from ros2_speech_recognition_interfaces.msg import StringArray
 from ros2_speech_recognition_interfaces.action import ListenOnce
 from std_srvs.srv import Empty
 
-from custom_ros2 import Node
+from simple_node import Node
 
 
 class DialogManagerNode(Node):

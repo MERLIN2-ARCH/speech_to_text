@@ -11,7 +11,7 @@ from std_msgs.msg import String
 from std_srvs.srv import Empty
 from ros2_speech_recognition.custom_thread import CustomThread
 
-from custom_ros2 import Node
+from simple_node import Node
 
 
 class STTNode(Node):  # pylint: disable=too-many-instance-attributes
