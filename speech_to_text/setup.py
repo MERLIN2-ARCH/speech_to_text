@@ -2,7 +2,7 @@ from glob import glob
 import os
 from setuptools import setup
 
-package_name = 'ros2_speech_recognition'
+package_name = 'speech_to_text'
 
 setup(
     name=package_name,
@@ -25,10 +25,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'stt_node = ros2_speech_recognition.stt_node:main',
-            'nlp_node = ros2_speech_recognition.nlp_node:main',
-            'parser_node = ros2_speech_recognition.parser_node:main',
-            'dialog_manager_node = ros2_speech_recognition.dialog_manager_node:main'
+            'stt_node = speech_to_text.stt_node:main',
+            'nlp_node = speech_to_text.nlp_node:main',
+            'parser_node = speech_to_text.parser_node:main',
+            'dialog_manager_node = speech_to_text.dialog_manager_node:main'
         ],
     },
 )

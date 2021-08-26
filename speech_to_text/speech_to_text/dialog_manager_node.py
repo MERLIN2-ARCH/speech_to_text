@@ -3,8 +3,8 @@
 import time
 import rclpy
 
-from ros2_speech_recognition_interfaces.msg import StringArray
-from ros2_speech_recognition_interfaces.action import ListenOnce
+from speech_to_text_interfaces.msg import StringArray
+from speech_to_text_interfaces.action import ListenOnce
 from std_srvs.srv import Empty
 
 from simple_node import Node

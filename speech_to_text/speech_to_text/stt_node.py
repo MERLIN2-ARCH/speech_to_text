@@ -9,7 +9,7 @@ import ament_index_python
 
 from std_msgs.msg import String
 from std_srvs.srv import Empty
-from ros2_speech_recognition.custom_thread import CustomThread
+from speech_to_text.custom_thread import CustomThread
 
 from simple_node import Node
 
@@ -35,7 +35,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
 
         self.declare_parameter(service_param_name, "sphinx")
         self.declare_parameter(grammar_param_name, ament_index_python.get_package_share_directory(
-            "ros2_speech_recognition") + "/grammars/example.gram")
+            "speech_to_text") + "/grammars/example.gram")
 
         self.declare_parameter(started_param_name, True)
 

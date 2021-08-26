@@ -7,8 +7,8 @@ import ament_index_python
 
 
 def generate_launch_description():
-    pkg_name = 'ros2_speech_recognition'
-    namespace = 'speech_recognition'
+    pkg_name = 'speech_to_text'
+    namespace = 'speech_to_text'
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
         'RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')

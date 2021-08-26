@@ -5,7 +5,7 @@ import rclpy
 import ament_index_python
 
 from std_msgs.msg import String
-from ros2_speech_recognition_interfaces.msg import StringArray
+from speech_to_text_interfaces.msg import StringArray
 
 from jsgf import parse_grammar_file
 
@@ -22,7 +22,7 @@ class ParserNode(Node):  # pylint: disable=too-few-public-methods
         grammar_param_name = "grammar"
 
         self.declare_parameter(grammar_param_name, ament_index_python.get_package_share_directory(
-            "ros2_speech_recognition") + "/grammars/example.gram")
+            "speech_to_text") + "/grammars/example.gram")
 
         self.grammar = self.get_parameter(
             grammar_param_name).get_parameter_value().string_value
