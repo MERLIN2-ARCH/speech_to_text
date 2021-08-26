@@ -7,41 +7,41 @@ import ament_index_python
 
 
 def generate_launch_description():
-    pkg_name = 'speech_to_text'
-    namespace = 'speech_to_text'
+    pkg_name = "speech_to_text"
+    namespace = "speech_to_text"
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
-        'RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
+        "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1")
 
     #
     # ARGS
     #
 
-    stt_grammar = LaunchConfiguration('stt_grammar')
+    stt_grammar = LaunchConfiguration("stt_grammar")
     declare_stt_grammar_cmd = DeclareLaunchArgument(
-        'stt_grammar',
+        "stt_grammar",
         default_value=ament_index_python.get_package_share_directory(
-            pkg_name) + '/grammars/example.gram',
-        description='Stt node gram file')
+            pkg_name) + "/grammars/example.gram",
+        description="Stt node gram file")
 
-    stt_service = LaunchConfiguration('stt_service')
+    stt_service = LaunchConfiguration("stt_service")
     declare_stt_service_cmd = DeclareLaunchArgument(
-        'stt_service',
-        default_value='sphinx',
-        description='Speech recognition service')
+        "stt_service",
+        default_value="sphinx",
+        description="Speech recognition service")
 
-    stt_started = LaunchConfiguration('stt_started')
+    stt_started = LaunchConfiguration("stt_started")
     declare_stt_started_cmd = DeclareLaunchArgument(
-        'stt_started',
-        default_value='false',
-        description='Is stt started?')
+        "stt_started",
+        default_value="false",
+        description="Is stt started?")
 
-    parser_grammar = LaunchConfiguration('parser_grammar')
+    parser_grammar = LaunchConfiguration("parser_grammar")
     declare_parser_grammar_cmd = DeclareLaunchArgument(
-        'parser_grammar',
+        "parser_grammar",
         default_value=ament_index_python.get_package_share_directory(
-            pkg_name) + '/grammars/example.gram',
-        description='Parser node gram file')
+            pkg_name) + "/grammars/example.gram",
+        description="Parser node gram file")
 
     #
     # NODES
@@ -49,33 +49,33 @@ def generate_launch_description():
 
     stt_node_cmd = Node(
         package=pkg_name,
-        executable='stt_node',
-        name='stt_node',
+        executable="stt_node",
+        name="stt_node",
         namespace=namespace,
-        parameters=[{'grammar': stt_grammar},
-                    {'service': stt_service},
-                    {'started': stt_started}]
+        parameters=[{"grammar": stt_grammar},
+                    {"service": stt_service},
+                    {"started": stt_started}]
     )
 
     nlp_node_cmd = Node(
         package=pkg_name,
-        executable='nlp_node',
-        name='nlp_node',
+        executable="nlp_node",
+        name="nlp_node",
         namespace=namespace,
     )
 
     parser_node_cmd = Node(
         package=pkg_name,
-        executable='parser_node',
-        name='parser_node',
+        executable="parser_node",
+        name="parser_node",
         namespace=namespace,
-        parameters=[{'grammar': parser_grammar}]
+        parameters=[{"grammar": parser_grammar}]
     )
 
     dialog_manager_node_cmd = Node(
         package=pkg_name,
-        executable='dialog_manager_node',
-        name='dialog_manager_node',
+        executable="dialog_manager_node",
+        name="dialog_manager_node",
         namespace=namespace,
     )
 

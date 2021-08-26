@@ -1,14 +1,14 @@
-'''Flexible Thread File Class'''
+""" Flexible Thread File Class """
 
 import threading
 import ctypes
 
 
 class CustomThread(threading.Thread):
-    '''Custom Thread Class'''
+    """ Custom Thread Class"""
 
     def run(self):
-        '''target function of the thread class'''
+        """ target function of the thread class """
 
         self._return = None
 
@@ -21,9 +21,9 @@ class CustomThread(threading.Thread):
             del self._target, self._args, self._kwargs
 
     def get_id(self):
-        '''returns id of the respective thread'''
+        """ Returns id of the respective thread """
 
-        if hasattr(self, '_thread_id'):
+        if hasattr(self, "_thread_id"):
             return self._thread_id
 
         for id, thread in threading._active.items():
@@ -39,10 +39,10 @@ class CustomThread(threading.Thread):
 
         if res > 1:
             ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
-            print('Exception raise failure')
+            print("Exception raise failure")
 
     def terminate(self):
-        '''Thread terminate method'''
+        """ Thread terminate method """
 
         self.__raise_exception()
 
