@@ -15,11 +15,11 @@
 ## Installation
 
 ```
-cd ~/ros2_foxy/src
+cd ~/ros2_ws/src
 git clone speech_to_text
 cd speech_to_text
 ./install_dependencies.sh
-cd ~/ros2_foxy
+cd ~/ros2_ws
 colcon build && source install/setup.bash
 ```
 
