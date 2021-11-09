@@ -19,7 +19,7 @@ class NLPNode(Node):  # pylint: disable=too-few-public-methods
         # pubs and subs
         self.__pub = self.create_publisher(String, "stt_nlp", 10)
 
-        self.subscription = self.create_subscription(
+        self.__subscription = self.create_subscription(
             String,
             "stt",
             self.__do_nlp,

@@ -24,15 +24,15 @@ class ParserNode(Node):  # pylint: disable=too-few-public-methods
         self.declare_parameter(grammar_param_name, ament_index_python.get_package_share_directory(
             "speech_to_text") + "/grammars/example.gram")
 
-        self.grammar = self.get_parameter(
+        grammar = self.get_parameter(
             grammar_param_name).get_parameter_value().string_value
 
-        self.jsgf_grammar = parse_grammar_file(self.grammar)
+        self.jsgf_grammar = parse_grammar_file(grammar)
 
         # pubs and subs
         self.__pub = self.create_publisher(StringArray, "stt_parse", 10)
 
-        self.subscription = self.create_subscription(
+        self.__subscription = self.create_subscription(
             String,
             "stt_nlp",
             self.__parse,

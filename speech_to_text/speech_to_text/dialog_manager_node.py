@@ -30,7 +30,7 @@ class DialogManagerNode(Node):
         # pubs and subs
         self.__pub = self.create_publisher(StringArray, "stt_dialog", 10)
 
-        self.subscription = self.create_subscription(
+        self.__subscription = self.create_subscription(
             StringArray,
             "stt_parse",
             self.__stt_callback,
