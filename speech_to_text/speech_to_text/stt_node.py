@@ -117,7 +117,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
                     elif self.service == "google":
                         value = self.__rec.recognize_google(audio)
 
-                    if str is bytes:  # bytes for strings (Python 2)
+                    if value is bytes:  # bytes for strings (Python 2)
                         self.get_logger().info(format(value).encode("utf-8"))
                         stt_result.data = format(value).encode("utf-8")
                     else:  # unicode for strings (Python 3+)
