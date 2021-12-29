@@ -173,7 +173,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
         """ start listen with a thread"""
 
         while(self.__listen_thread is not None and self.__listen_thread.is_alive()):
-            time.sleep(0.1)
+            time.sleep(0.01)
 
         self.__rec.energy_threshold = self._energy_threshold
         self.__listen_thread = CustomThread(
