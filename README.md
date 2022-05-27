@@ -1,41 +1,35 @@
 # STT (Speech To Text)
 
-## Description
-
-- ROS2 Foxy Fitzroy
-- ROS2 speech to text system
-- This microphone of the robot is used
-- Python libs:
-  - speech_recognition
-  - nltk
-  - contractions
-  - pyjsgf
-
+STT for ROS 2 using JSGF grammars.
 
 ## Installation
 
-```
-cd ~/ros2_ws/src
-git clone speech_to_text
-cd speech_to_text
-./install_dependencies.sh
-cd ~/ros2_ws
-colcon build && source install/setup.bash
-```
-
-## Launch
-
-- Python launch
 ```shell
-ros2 launch speech_to_text speech_to_text_launch.py
+# clone
+$ cd ~/ros2_ws/src
+$ git clone ssh://git@niebla.unileon.es:5022/mgonzs/speech_to_text.git
+
+# dependencies
+$ sudo apt-get install -y python-dev libportaudio2 libportaudiocpp0 portaudio19-dev libasound-dev swig
+$ cd speech_to_text
+$ pip3 install -r requirements.txt
+$ python3 ./nltk_download.py
+
+# colcon
+$ cd ~/ros2_ws
+$ colcon build
 ```
 
-- XML launch
+## Usage
+
+### Launch
+
 ```shell
-ros2 launch speech_to_text speech_to_text_launch.xml
+$ ros2 launch speech_to_text speech_to_text.launch.py
 ```
 
-## Shell Example
+### Shell Example
+
 ```shell
-ros2 action send_goal /speech_to_text/listen_once speech_to_text_interfaces/action/ListenOnce {}
+$ ros2 action send_goal /speech_to_text/listen_once speech_to_text_interfaces/action/ListenOnce {}
 ```

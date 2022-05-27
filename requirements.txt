@@ -1,0 +1,10 @@
+pyaudio==0.2.11
+SpeechRecognition==3.8.1
+google-cloud-speech==1.3.2
+wheel==0.37.0
+pocketsphinx==0.1.15
+nltk==3.5
+contractions==0.0.25
+TextSearch==0.0.17
+pyparsing==2.4.7
+pyjsgf==1.9.0
