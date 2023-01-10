@@ -7,7 +7,7 @@ STT for ROS 2 using JSGF grammars.
 ```shell
 # clone
 $ cd ~/ros2_ws/src
-$ git clone ssh://git@niebla.unileon.es:5022/mgonzs/speech_to_text.git
+$ git clone https://github.com/MERLIN2-ARCH/speech_to_text.git
 
 # dependencies
 $ sudo apt-get install -y python-dev libportaudio2 libportaudiocpp0 portaudio19-dev libasound-dev swig
