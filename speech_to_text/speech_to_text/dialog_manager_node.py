@@ -100,7 +100,7 @@ class DialogManagerNode(Node):
         self.start_stt()
 
         # wait for message
-        while(not self.is_new_msg and not self.__action_server.is_canceled()):
+        while (not self.is_new_msg and not goal_handle.is_cancel_requested):
             self.get_logger().info("Waiting for msg")
             time.sleep(0.5)
 
@@ -110,8 +110,7 @@ class DialogManagerNode(Node):
         # results
         result = ListenOnce.Result()
 
-        if self.__action_server.is_canceled():
-            self.__action_server.wait_for_canceling()
+        if goal_handle.is_cancel_requested:
             goal_handle.canceled()
 
         else:
