@@ -5,7 +5,7 @@ import rclpy
 import ament_index_python
 
 from std_msgs.msg import String
-from speech_to_text_interfaces.msg import StringArray
+from speech_to_text_msgs.msg import StringArray
 
 from jsgf import parse_grammar_file
 

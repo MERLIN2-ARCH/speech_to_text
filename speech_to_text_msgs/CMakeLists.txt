@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(speech_to_text_interfaces)
+project(speech_to_text_msgs)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)

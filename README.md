@@ -31,5 +31,5 @@ $ ros2 launch speech_to_text speech_to_text.launch.py
 ### Shell Example
 
 ```shell
-$ ros2 action send_goal /speech_to_text/listen_once speech_to_text_interfaces/action/ListenOnce {}
+$ ros2 action send_goal /speech_to_text/listen_once speech_to_text_msgs/action/ListenOnce {}
 ```
