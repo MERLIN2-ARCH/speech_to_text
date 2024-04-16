@@ -1,21 +1,20 @@
 """ ROS2 Node to Parse Speech """
 
 from typing import List
+from jsgf import parse_grammar_file
+
 import rclpy
 import ament_index_python
+from simple_node import Node
 
 from std_msgs.msg import String
 from speech_to_text_msgs.msg import StringArray
-
-from jsgf import parse_grammar_file
-
-from simple_node import Node
 
 
 class ParserNode(Node):  # pylint: disable=too-few-public-methods
     """ Parser Node Class """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("parser_node")
 
         # loading params
@@ -38,7 +37,7 @@ class ParserNode(Node):  # pylint: disable=too-few-public-methods
             self.__parse,
             10)
 
-    def __parse(self, msg: String):
+    def __parse(self, msg: String) -> None:
         """ parser callback
 
         Args:
@@ -71,13 +70,10 @@ class ParserNode(Node):  # pylint: disable=too-few-public-methods
         return tag_list
 
 
-def main(args=None):
-    rclpy.init(args=args)
-
+def main():
+    rclpy.init()
     node = ParserNode()
-
     node.join_spin()
-
     rclpy.shutdown()
 
 

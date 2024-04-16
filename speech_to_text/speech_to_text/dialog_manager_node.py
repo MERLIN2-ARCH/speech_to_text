@@ -2,18 +2,17 @@
 
 import time
 import rclpy
+from simple_node import Node
 
 from speech_to_text_msgs.msg import StringArray
 from speech_to_text_msgs.action import ListenOnce
 from std_srvs.srv import Empty
 
-from simple_node import Node
-
 
 class DialogManagerNode(Node):
     """ Dialog Manager Node Class """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("dialog_manager_node")
 
         self.is_new_msg = False
@@ -34,15 +33,17 @@ class DialogManagerNode(Node):
             StringArray,
             "stt_parse",
             self.__stt_callback,
-            10)
+            10
+        )
 
         # action server
-        self.__action_server = self.create_action_server(ListenOnce,
-                                                         "listen_once",
-                                                         execute_callback=self.__execute_server
-                                                         )
+        self.__action_server = self.create_action_server(
+            ListenOnce,
+            "listen_once",
+            execute_callback=self.__execute_server
+        )
 
-    def __stt_callback(self, msg: StringArray):
+    def __stt_callback(self, msg: StringArray) -> None:
         """ final speech calback
 
         Args:
@@ -56,7 +57,7 @@ class DialogManagerNode(Node):
             self.new_msg = msg
             self.is_new_msg = True
 
-    def calibrate_stt(self):
+    def calibrate_stt(self) -> None:
         """ calibrate stt method """
 
         req = Empty.Request()
@@ -64,7 +65,7 @@ class DialogManagerNode(Node):
         self.__calibrating_client.call(req)
         self.get_logger().info("calibrating stt")
 
-    def start_stt(self):
+    def start_stt(self) -> None:
         """ start stt method """
 
         req = Empty.Request()
@@ -72,7 +73,7 @@ class DialogManagerNode(Node):
         self.__start_listening_client.call(req)
         self.get_logger().info("starting stt")
 
-    def stop_stt(self):
+    def stop_stt(self) -> None:
         """ stop stt method """
 
         req = Empty.Request()
@@ -120,13 +121,10 @@ class DialogManagerNode(Node):
         return result
 
 
-def main(args=None):
-    rclpy.init(args=args)
-
+def main():
+    rclpy.init()
     node = DialogManagerNode()
-
     node.join_spin()
-
     rclpy.shutdown()
 
 

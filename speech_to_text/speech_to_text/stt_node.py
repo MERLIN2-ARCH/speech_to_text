@@ -17,7 +17,7 @@ from simple_node import Node
 class STTNode(Node):  # pylint: disable=too-many-instance-attributes
     """ STT Node Class """
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         super().__init__("stt_node")
 
@@ -62,9 +62,11 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             Empty, "calibrate_listening", self.__calibrate_stt_srv)
 
     # CALIBRATE
-    def __calibrate_stt_srv(self,
-                            req: Empty.Request,
-                            res: Empty.Response) -> Empty.Response:  # pylint: disable=unused-argument
+    def __calibrate_stt_srv(
+        self,
+        req: Empty.Request,
+        res: Empty.Response
+    ) -> Empty.Response:  # pylint: disable=unused-argument
         """ calibrate service
 
         Args:
@@ -78,7 +80,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
         self.calibrate_stt(2)
         return res
 
-    def calibrate_stt(self, seconds: int):
+    def calibrate_stt(self, seconds: int) -> None:
         """ calibrate noise
 
         Args:
@@ -95,7 +97,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
         self.get_logger().info("Set minimum energy threshold to " + str(self._energy_threshold))
 
     # LISTEN
-    def listen_from_mic(self):
+    def listen_from_mic(self) -> None:
         """ listen from mic """
 
         while self.started and rclpy.ok():
@@ -134,7 +136,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
                 finally:
                     self.__pub.publish(stt_result)
 
-    def __listen_stt_thread_cb(self):
+    def __listen_stt_thread_cb(self) -> None:
         """ thread callback to listen """
 
         try:
@@ -144,9 +146,11 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             self.get_logger().info("listen_thread ends")
 
     # START
-    def __start_stt_srv(self,
-                        req: Empty.Request,
-                        res: Empty.Response) -> Empty.Response:  # pylint: disable=unused-argument
+    def __start_stt_srv(
+        self,
+        req: Empty.Request,
+        res: Empty.Response
+    ) -> Empty.Response:  # pylint: disable=unused-argument
         """ service to start listen
 
         Args:
@@ -160,7 +164,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
         self.start_stt()
         return res
 
-    def start_stt(self):
+    def start_stt(self) -> None:
         """ start listen """
 
         if not self.started:
@@ -169,10 +173,10 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
         else:
             self.get_logger().info("stt is already running")
 
-    def _start_stt(self):
+    def _start_stt(self) -> None:
         """ start listen with a thread"""
 
-        while(self.__listen_thread is not None and self.__listen_thread.is_alive()):
+        while (self.__listen_thread is not None and self.__listen_thread.is_alive()):
             time.sleep(0.01)
 
         self.__rec.energy_threshold = self._energy_threshold
@@ -183,9 +187,11 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
                                str(self.__rec.energy_threshold))
 
     # STOP
-    def __stop_stt_srv(self,
-                       req: Empty.Request,
-                       res: Empty.Response) -> Empty.Response:  # pylint: disable=unused-argument
+    def __stop_stt_srv(
+        self,
+        req: Empty.Request,
+        res: Empty.Response
+    ) -> Empty.Response:  # pylint: disable=unused-argument
         """ service to stop listen
 
         Args:
@@ -199,7 +205,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
         self.stop_stt()
         return res
 
-    def stop_stt(self):
+    def stop_stt(self) -> None:
         """ stop listen """
 
         if self.started:
@@ -208,22 +214,19 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
         else:
             self.get_logger().info("stt is already stopped")
 
-    def _stop_stt(self):
+    def _stop_stt(self) -> None:
         """ stop listen with a thread """
 
-        if(self.__listen_thread is not None and self.__listen_thread.is_alive()):
+        if (self.__listen_thread is not None and self.__listen_thread.is_alive()):
             self.__listen_thread.terminate()
         self.get_logger().info("stop listening, Threshold " +
                                str(self.__rec.energy_threshold))
 
 
-def main(args=None):
-    rclpy.init(args=args)
-
+def main():
+    rclpy.init()
     node = STTNode()
-
     node.join_spin()
-
     rclpy.shutdown()
 
 
