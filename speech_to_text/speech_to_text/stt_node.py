@@ -47,7 +47,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             started_param_name).get_parameter_value().bool_value
 
         if self.started:
-            self.calibrate_stt(2)
+            self.calibrate_stt(1)
             self._start_stt()
 
         # result stt publisher
@@ -77,7 +77,7 @@ class STTNode(Node):  # pylint: disable=too-many-instance-attributes
             Empty.Response: empty
         """
 
-        self.calibrate_stt(2)
+        self.calibrate_stt(1)
         return res
 
     def calibrate_stt(self, seconds: int) -> None:
