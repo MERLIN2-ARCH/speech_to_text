@@ -6,23 +6,22 @@ from typing import Any
 
 
 class CustomThread(threading.Thread):
-    """ Custom Thread Class"""
+    """Custom Thread Class"""
 
     def run(self) -> None:
-        """ target function of the thread class """
+        """target function of the thread class"""
 
         self._return = None
 
         try:
             if self._target:
-                self._return = self._target(
-                    *self._args, **self._kwargs)
+                self._return = self._target(*self._args, **self._kwargs)
 
         finally:
             del self._target, self._args, self._kwargs
 
     def get_id(self) -> int:
-        """ Returns id of the respective thread """
+        """Returns id of the respective thread"""
 
         if hasattr(self, "_thread_id"):
             return self._thread_id
@@ -36,14 +35,15 @@ class CustomThread(threading.Thread):
         thread_id = self.get_id()
 
         res = ctypes.pythonapi.PyThreadState_SetAsyncExc(
-            ctypes.c_long(thread_id), ctypes.py_object(SystemExit))
+            ctypes.c_long(thread_id), ctypes.py_object(SystemExit)
+        )
 
         if res > 1:
             ctypes.pythonapi.PyThreadState_SetAsyncExc(thread_id, 0)
             print("Exception raise failure")
 
     def terminate(self) -> None:
-        """ Thread terminate method """
+        """Thread terminate method"""
 
         self.__raise_exception()
 

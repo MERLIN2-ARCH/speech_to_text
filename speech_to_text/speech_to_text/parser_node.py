@@ -12,7 +12,7 @@ from speech_to_text_msgs.msg import StringArray
 
 
 class ParserNode(Node):  # pylint: disable=too-few-public-methods
-    """ Parser Node Class """
+    """Parser Node Class"""
 
     def __init__(self) -> None:
         super().__init__("parser_node")
@@ -20,11 +20,15 @@ class ParserNode(Node):  # pylint: disable=too-few-public-methods
         # loading params
         grammar_param_name = "grammar"
 
-        self.declare_parameter(grammar_param_name, ament_index_python.get_package_share_directory(
-            "speech_to_text") + "/grammars/example.gram")
+        self.declare_parameter(
+            grammar_param_name,
+            ament_index_python.get_package_share_directory("speech_to_text")
+            + "/grammars/example.gram",
+        )
 
-        grammar = self.get_parameter(
-            grammar_param_name).get_parameter_value().string_value
+        grammar = (
+            self.get_parameter(grammar_param_name).get_parameter_value().string_value
+        )
 
         self.jsgf_grammar = parse_grammar_file(grammar)
 
@@ -32,13 +36,11 @@ class ParserNode(Node):  # pylint: disable=too-few-public-methods
         self.__pub = self.create_publisher(StringArray, "stt_parse", 10)
 
         self.__subscription = self.create_subscription(
-            String,
-            "stt_nlp",
-            self.__parse,
-            10)
+            String, "stt_nlp", self.__parse, 10
+        )
 
     def __parse(self, msg: String) -> None:
-        """ parser callback
+        """parser callback
 
         Args:
             msg (String): msg with text to parse
@@ -50,7 +52,7 @@ class ParserNode(Node):  # pylint: disable=too-few-public-methods
         self.__pub.publish(new_msg)
 
     def parse(self, data: str) -> List[str]:
-        """ parse text into a list of str (tags)
+        """parse text into a list of str (tags)
 
         Args:
             data (str): text to parse

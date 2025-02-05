@@ -10,7 +10,7 @@ from std_srvs.srv import Empty
 
 
 class DialogManagerNode(Node):
-    """ Dialog Manager Node Class """
+    """Dialog Manager Node Class"""
 
     def __init__(self) -> None:
         super().__init__("dialog_manager_node")
@@ -19,32 +19,24 @@ class DialogManagerNode(Node):
         self.new_msg = None
 
         # service clients
-        self.__start_listening_client = self.create_client(
-            Empty, "start_listening")
-        self.__stop_listening_client = self.create_client(
-            Empty, "stop_listening")
-        self.__calibrating_client = self.create_client(
-            Empty, "calibrate_listening")
+        self.__start_listening_client = self.create_client(Empty, "start_listening")
+        self.__stop_listening_client = self.create_client(Empty, "stop_listening")
+        self.__calibrating_client = self.create_client(Empty, "calibrate_listening")
 
         # pubs and subs
         self.__pub = self.create_publisher(StringArray, "stt_dialog", 10)
 
         self.__subscription = self.create_subscription(
-            StringArray,
-            "stt_parse",
-            self.__stt_callback,
-            10
+            StringArray, "stt_parse", self.__stt_callback, 10
         )
 
         # action server
         self.__action_server = self.create_action_server(
-            ListenOnce,
-            "listen_once",
-            execute_callback=self.__execute_server
+            ListenOnce, "listen_once", execute_callback=self.__execute_server
         )
 
     def __stt_callback(self, msg: StringArray) -> None:
-        """ final speech calback
+        """final speech calback
 
         Args:
             msg (StringArray): list of tags
@@ -58,7 +50,7 @@ class DialogManagerNode(Node):
             self.is_new_msg = True
 
     def calibrate_stt(self) -> None:
-        """ calibrate stt method """
+        """calibrate stt method"""
 
         req = Empty.Request()
         self.__calibrating_client.wait_for_service()
@@ -66,7 +58,7 @@ class DialogManagerNode(Node):
         self.get_logger().info("calibrating stt")
 
     def start_stt(self) -> None:
-        """ start stt method """
+        """start stt method"""
 
         req = Empty.Request()
         self.__start_listening_client.wait_for_service()
@@ -74,7 +66,7 @@ class DialogManagerNode(Node):
         self.get_logger().info("starting stt")
 
     def stop_stt(self) -> None:
-        """ stop stt method """
+        """stop stt method"""
 
         req = Empty.Request()
         self.__stop_listening_client.wait_for_service()
@@ -82,7 +74,7 @@ class DialogManagerNode(Node):
         self.get_logger().info("stopping stt")
 
     def __execute_server(self, goal_handle) -> ListenOnce.Result:
-        """ action server execute callback
+        """action server execute callback
 
         Args:
             goal_handle ([type]): goal_handle
@@ -101,7 +93,7 @@ class DialogManagerNode(Node):
         self.start_stt()
 
         # wait for message
-        while (not self.is_new_msg and not goal_handle.is_cancel_requested):
+        while not self.is_new_msg and not goal_handle.is_cancel_requested:
             self.get_logger().info("Waiting for msg")
             time.sleep(0.5)
 

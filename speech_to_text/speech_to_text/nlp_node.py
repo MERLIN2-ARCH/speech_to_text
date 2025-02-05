@@ -9,7 +9,7 @@ from std_msgs.msg import String
 
 
 class NLPNode(Node):  # pylint: disable=too-few-public-methods
-    """ NLP Node Class """
+    """NLP Node Class"""
 
     def __init__(self) -> None:
         super().__init__("nlp_node")
@@ -17,14 +17,10 @@ class NLPNode(Node):  # pylint: disable=too-few-public-methods
         # pubs and subs
         self.__pub = self.create_publisher(String, "stt_nlp", 10)
 
-        self.__subscription = self.create_subscription(
-            String,
-            "stt",
-            self.__do_nlp,
-            10)
+        self.__subscription = self.create_subscription(String, "stt", self.__do_nlp, 10)
 
     def __do_nlp(self, msg: String) -> None:
-        """ nlp callback
+        """nlp callback
 
         Args:
             msg (String): text to do nlp
@@ -36,7 +32,7 @@ class NLPNode(Node):  # pylint: disable=too-few-public-methods
         self.__pub.publish(new_msg)
 
     def do_nlp(self, data: str) -> str:
-        """ apply nlp to a text
+        """apply nlp to a text
 
         Args:
             data (str): text to do nlp
@@ -66,7 +62,7 @@ class NLPNode(Node):  # pylint: disable=too-few-public-methods
                     or tag[1] == "DT"
                 ):
 
-                    nlp_s += tag[0]+" "
+                    nlp_s += tag[0] + " "
         self.get_logger().info("NLP: " + str(nlp_s))
         return nlp_s
 
