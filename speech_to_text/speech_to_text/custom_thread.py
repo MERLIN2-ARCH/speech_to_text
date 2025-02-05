@@ -1,4 +1,4 @@
-""" Flexible Thread File Class """
+"""Flexible Thread File Class"""
 
 import threading
 import ctypes

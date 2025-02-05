@@ -1,4 +1,4 @@
-""" ROS2 Node for NLP """
+"""ROS2 Node for NLP"""
 
 import nltk
 import contractions

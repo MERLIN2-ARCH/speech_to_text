@@ -1,4 +1,4 @@
-""" ROS2 Node to Parse Speech """
+"""ROS2 Node to Parse Speech"""
 
 from typing import List
 from jsgf import parse_grammar_file

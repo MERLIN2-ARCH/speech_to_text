@@ -1,4 +1,4 @@
-""" ROS2 Node for Dialog Manger """
+"""ROS2 Node for Dialog Manger"""
 
 import time
 import rclpy

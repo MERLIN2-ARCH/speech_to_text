@@ -1,4 +1,4 @@
-""" ROS2 Node to make STT """
+"""ROS2 Node to make STT"""
 
 import time
 
